@@ -12,7 +12,7 @@ export function SiteFooter() {
   const { data: s } = useQuery(settingsQuery);
   const { open } = useContact();
   const socials = SOCIAL_KEYS.filter((k) => /^https:\/\//.test(s?.[k] ?? ""));
-  const wa = whatsappLink(s?.whatsapp);
+  const wa = whatsappLink(s?.['whatsapp']);
   return (
     <footer className="bg-plum text-petal">
       <div className="container-site grid gap-10 py-14 md:grid-cols-[1.4fr_1fr_1fr]">

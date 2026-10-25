@@ -10,12 +10,58 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as BlogRouteImport } from './routes/blog'
+import { Route as EmailUpdatesRouteImport } from './routes/email-updates'
+import { Route as FaqsRouteImport } from './routes/faqs'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ProcessRouteImport } from './routes/process'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as OtherServicesIndexRouteImport } from './routes/other-services.index'
+import { Route as OtherServicesSlugRouteImport } from './routes/other-services.$slug'
+import { Route as PortfolioIndexRouteImport } from './routes/portfolio.index'
+import { Route as PortfolioSlugRouteImport } from './routes/portfolio.$slug'
 import { Route as ShopifyServicesIndexRouteImport } from './routes/shopify-services.index'
+import { Route as ShopifyServicesSlugRouteImport } from './routes/shopify-services.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmailUpdatesRoute = EmailUpdatesRouteImport.update({
+  id: '/email-updates',
+  path: '/email-updates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqsRoute = FaqsRouteImport.update({
+  id: '/faqs',
+  path: '/faqs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProcessRoute = ProcessRouteImport.update({
+  id: '/process',
+  path: '/process',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OtherServicesIndexRoute = OtherServicesIndexRouteImport.update({
@@ -23,39 +69,146 @@ const OtherServicesIndexRoute = OtherServicesIndexRouteImport.update({
   path: '/other-services/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OtherServicesSlugRoute = OtherServicesSlugRouteImport.update({
+  id: '/other-services/$slug',
+  path: '/other-services/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortfolioIndexRoute = PortfolioIndexRouteImport.update({
+  id: '/portfolio/',
+  path: '/portfolio/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortfolioSlugRoute = PortfolioSlugRouteImport.update({
+  id: '/portfolio/$slug',
+  path: '/portfolio/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopifyServicesIndexRoute = ShopifyServicesIndexRouteImport.update({
   id: '/shopify-services/',
   path: '/shopify-services/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShopifyServicesSlugRoute = ShopifyServicesSlugRouteImport.update({
+  id: '/shopify-services/$slug',
+  path: '/shopify-services/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/blog': typeof BlogRoute
+  '/email-updates': typeof EmailUpdatesRoute
+  '/faqs': typeof FaqsRoute
+  '/privacy': typeof PrivacyRoute
+  '/process': typeof ProcessRoute
+  '/terms': typeof TermsRoute
+  '/other-services/$slug': typeof OtherServicesSlugRoute
+  '/portfolio/$slug': typeof PortfolioSlugRoute
+  '/shopify-services/$slug': typeof ShopifyServicesSlugRoute
   '/other-services/': typeof OtherServicesIndexRoute
+  '/portfolio/': typeof PortfolioIndexRoute
   '/shopify-services/': typeof ShopifyServicesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/blog': typeof BlogRoute
+  '/email-updates': typeof EmailUpdatesRoute
+  '/faqs': typeof FaqsRoute
+  '/privacy': typeof PrivacyRoute
+  '/process': typeof ProcessRoute
+  '/terms': typeof TermsRoute
+  '/other-services/$slug': typeof OtherServicesSlugRoute
+  '/portfolio/$slug': typeof PortfolioSlugRoute
+  '/shopify-services/$slug': typeof ShopifyServicesSlugRoute
   '/other-services': typeof OtherServicesIndexRoute
+  '/portfolio': typeof PortfolioIndexRoute
   '/shopify-services': typeof ShopifyServicesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/blog': typeof BlogRoute
+  '/email-updates': typeof EmailUpdatesRoute
+  '/faqs': typeof FaqsRoute
+  '/privacy': typeof PrivacyRoute
+  '/process': typeof ProcessRoute
+  '/terms': typeof TermsRoute
+  '/other-services/$slug': typeof OtherServicesSlugRoute
+  '/portfolio/$slug': typeof PortfolioSlugRoute
+  '/shopify-services/$slug': typeof ShopifyServicesSlugRoute
   '/other-services/': typeof OtherServicesIndexRoute
+  '/portfolio/': typeof PortfolioIndexRoute
   '/shopify-services/': typeof ShopifyServicesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/other-services/' | '/shopify-services/'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/blog'
+    | '/email-updates'
+    | '/faqs'
+    | '/privacy'
+    | '/process'
+    | '/terms'
+    | '/other-services/$slug'
+    | '/portfolio/$slug'
+    | '/shopify-services/$slug'
+    | '/other-services/'
+    | '/portfolio/'
+    | '/shopify-services/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/other-services' | '/shopify-services'
-  id: '__root__' | '/' | '/other-services/' | '/shopify-services/'
+  to:
+    | '/'
+    | '/about'
+    | '/blog'
+    | '/email-updates'
+    | '/faqs'
+    | '/privacy'
+    | '/process'
+    | '/terms'
+    | '/other-services/$slug'
+    | '/portfolio/$slug'
+    | '/shopify-services/$slug'
+    | '/other-services'
+    | '/portfolio'
+    | '/shopify-services'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/blog'
+    | '/email-updates'
+    | '/faqs'
+    | '/privacy'
+    | '/process'
+    | '/terms'
+    | '/other-services/$slug'
+    | '/portfolio/$slug'
+    | '/shopify-services/$slug'
+    | '/other-services/'
+    | '/portfolio/'
+    | '/shopify-services/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  BlogRoute: typeof BlogRoute
+  EmailUpdatesRoute: typeof EmailUpdatesRoute
+  FaqsRoute: typeof FaqsRoute
+  PrivacyRoute: typeof PrivacyRoute
+  ProcessRoute: typeof ProcessRoute
+  TermsRoute: typeof TermsRoute
+  OtherServicesSlugRoute: typeof OtherServicesSlugRoute
+  PortfolioSlugRoute: typeof PortfolioSlugRoute
+  ShopifyServicesSlugRoute: typeof ShopifyServicesSlugRoute
   OtherServicesIndexRoute: typeof OtherServicesIndexRoute
+  PortfolioIndexRoute: typeof PortfolioIndexRoute
   ShopifyServicesIndexRoute: typeof ShopifyServicesIndexRoute
 }
 
@@ -68,11 +221,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/email-updates': {
+      id: '/email-updates'
+      path: '/email-updates'
+      fullPath: '/email-updates'
+      preLoaderRoute: typeof EmailUpdatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faqs': {
+      id: '/faqs'
+      path: '/faqs'
+      fullPath: '/faqs'
+      preLoaderRoute: typeof FaqsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/process': {
+      id: '/process'
+      path: '/process'
+      fullPath: '/process'
+      preLoaderRoute: typeof ProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/other-services/': {
       id: '/other-services/'
       path: '/other-services'
       fullPath: '/other-services/'
       preLoaderRoute: typeof OtherServicesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/other-services/$slug': {
+      id: '/other-services/$slug'
+      path: '/other-services/$slug'
+      fullPath: '/other-services/$slug'
+      preLoaderRoute: typeof OtherServicesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfolio/': {
+      id: '/portfolio/'
+      path: '/portfolio'
+      fullPath: '/portfolio/'
+      preLoaderRoute: typeof PortfolioIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfolio/$slug': {
+      id: '/portfolio/$slug'
+      path: '/portfolio/$slug'
+      fullPath: '/portfolio/$slug'
+      preLoaderRoute: typeof PortfolioSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shopify-services/': {
@@ -82,12 +305,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopifyServicesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/shopify-services/$slug': {
+      id: '/shopify-services/$slug'
+      path: '/shopify-services/$slug'
+      fullPath: '/shopify-services/$slug'
+      preLoaderRoute: typeof ShopifyServicesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  BlogRoute: BlogRoute,
+  EmailUpdatesRoute: EmailUpdatesRoute,
+  FaqsRoute: FaqsRoute,
+  PrivacyRoute: PrivacyRoute,
+  ProcessRoute: ProcessRoute,
+  TermsRoute: TermsRoute,
+  OtherServicesSlugRoute: OtherServicesSlugRoute,
+  PortfolioSlugRoute: PortfolioSlugRoute,
+  ShopifyServicesSlugRoute: ShopifyServicesSlugRoute,
   OtherServicesIndexRoute: OtherServicesIndexRoute,
+  PortfolioIndexRoute: PortfolioIndexRoute,
   ShopifyServicesIndexRoute: ShopifyServicesIndexRoute,
 }
 export const routeTree = rootRouteImport
