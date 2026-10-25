@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as OtherServicesIndexRouteImport } from './routes/other-services.index'
+import { Route as ShopifyServicesIndexRouteImport } from './routes/shopify-services.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OtherServicesIndexRoute = OtherServicesIndexRouteImport.update({
+  id: '/other-services/',
+  path: '/other-services/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopifyServicesIndexRoute = ShopifyServicesIndexRouteImport.update({
+  id: '/shopify-services/',
+  path: '/shopify-services/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/other-services/': typeof OtherServicesIndexRoute
+  '/shopify-services/': typeof ShopifyServicesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/other-services': typeof OtherServicesIndexRoute
+  '/shopify-services': typeof ShopifyServicesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/other-services/': typeof OtherServicesIndexRoute
+  '/shopify-services/': typeof ShopifyServicesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/other-services/' | '/shopify-services/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/other-services' | '/shopify-services'
+  id: '__root__' | '/' | '/other-services/' | '/shopify-services/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  OtherServicesIndexRoute: typeof OtherServicesIndexRoute
+  ShopifyServicesIndexRoute: typeof ShopifyServicesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/other-services/': {
+      id: '/other-services/'
+      path: '/other-services'
+      fullPath: '/other-services/'
+      preLoaderRoute: typeof OtherServicesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shopify-services/': {
+      id: '/shopify-services/'
+      path: '/shopify-services'
+      fullPath: '/shopify-services/'
+      preLoaderRoute: typeof ShopifyServicesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  OtherServicesIndexRoute: OtherServicesIndexRoute,
+  ShopifyServicesIndexRoute: ShopifyServicesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
