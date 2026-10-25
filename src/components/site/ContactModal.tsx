@@ -14,7 +14,7 @@ type Errors = Partial<Record<"name" | "email" | "message" | "form", string>>;
 
 export function ContactModal({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
   const { data: settings } = useQuery(settingsQuery);
-  const wa = whatsappLink(settings?.whatsapp);
+  const wa = whatsappLink(settings?.['whatsapp']);
   const [form, setForm] = useState({ name: "", email: "", message: "", wantsUpdates: false, website: "" });
   const [errors, setErrors] = useState<Errors>({});
   const [sending, setSending] = useState(false);
@@ -118,7 +118,7 @@ export function ContactModal({ open, onOpenChange }: { open: boolean; onOpenChan
   );
 }
 
-function Field({ id, label, error, children }: { id: string; label: string; error?: string; children: React.ReactNode }) {
+function Field({ id, label, error, children }: { id: string; label: string; error?: string | undefined; children: React.ReactNode }) {
   return (
     <div className="space-y-1.5">
       <Label htmlFor={id} className="text-sm font-semibold text-plum">{label} <span className="text-berry">*</span></Label>

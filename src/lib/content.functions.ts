@@ -118,7 +118,7 @@ export type BlogPost = { title: string; link: string; date: string | null; excer
 function pick(xml: string, tag: string) {
   const m = xml.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)</${tag}>`));
   if (!m) return "";
-  return m[1].replace(/^<!\[CDATA\[/, "").replace(/\]\]>$/, "").trim();
+  return (m[1] ?? "").replace(/^<!\[CDATA\[/, "").replace(/\]\]>$/, "").trim();
 }
 function strip(html: string) {
   return html.replace(/<[^>]+>/g, " ").replace(/&[a-z#0-9]+;/gi, " ").replace(/\s+/g, " ").trim();
@@ -146,7 +146,7 @@ export const getSubstackPosts = createServerFn({ method: "GET" }).handler(async 
         link: pick(it, "link"),
         date: d ? new Date(d).toISOString() : null,
         excerpt: strip(pick(it, "description")).slice(0, 180),
-        image: img ? img[1] : null,
+        image: img?.[1] ?? null,
       };
     });
     return { configured: true, url: base, posts };
