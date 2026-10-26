@@ -15,6 +15,13 @@
       "when": 1793034483533,
       "tag": "0001_first_user_admin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793035284181,
+      "tag": "0002_portfolio_storage_policies",
+      "breakpoints": true
     }
   ]
 }
