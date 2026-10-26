@@ -25,7 +25,53 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
 });
 
-type FieldType = "text" | "textarea" | "list" | "number" | "bool" | "select";
+type FieldType = "text" | "textarea" | "list" | "number" | "bool" | "select" | "image" | "images";
+
+const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
+async function uploadPhoto(file: File): Promise<string> {
+  const ext = file.name.split(".").pop() || "jpg";
+  const path = `${crypto.randomUUID()}.${ext}`;
+  const { error } = await supabase.storage.from("portfolio").upload(path, file, { contentType: file.type });
+  if (error) throw error;
+  const { data, error: e2 } = await supabase.storage.from("portfolio").createSignedUrl(path, TEN_YEARS);
+  if (e2 || !data) throw e2 ?? new Error("Upload failed");
+  return data.signedUrl;
+}
+
+function PhotoField({ id, multiple, value, onChange }: { id: string; multiple: boolean; value: string[]; onChange: (v: string[]) => void }) {
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  async function pick(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    e.target.value = "";
+    if (!files.length) return;
+    setBusy(true); setErr("");
+    try {
+      const urls = await Promise.all(files.map(uploadPhoto));
+      onChange(multiple ? [...value, ...urls] : urls.slice(0, 1));
+    } catch (x) {
+      setErr(x instanceof Error ? x.message : "Upload failed");
+    } finally { setBusy(false); }
+  }
+  return (
+    <div className="space-y-2">
+      {value.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {value.map((u, i) => (
+            <div key={u + i} className="relative">
+              <img src={u} alt="" className="h-24 w-24 rounded-md border border-border object-cover" />
+              <button type="button" onClick={() => onChange(value.filter((_, j) => j !== i))}
+                className="absolute -right-2 -top-2 rounded-full bg-destructive px-2 text-xs text-destructive-foreground" aria-label="Remove photo">×</button>
+            </div>
+          ))}
+        </div>
+      )}
+      <Input id={id} type="file" accept="image/*" multiple={multiple} onChange={pick} disabled={busy} />
+      {busy && <p className="text-xs text-muted-foreground">Uploading…</p>}
+      {err && <p className="text-xs text-destructive">{err}</p>}
+    </div>
+  );
+}
 type Field = { key: string; label: string; type: FieldType; options?: string[] };
 type TableName = "services" | "faqs" | "projects" | "testimonials" | "process_steps";
 type Section = { table: TableName; label: string; titleKey: string; fields: Field[]; defaults: Record<string, unknown> };
@@ -63,7 +109,7 @@ const SECTIONS: Section[] = [
       { key: "project_type", label: "Type", type: "select", options: ["concept", "client", "practice"] },
       { key: "featured", label: "Show on home page", type: "bool" },
       { key: "summary", label: "Summary", type: "textarea" },
-      { key: "cover_url", label: "Cover image link", type: "text" },
+      { key: "cover_url", label: "Cover photo", type: "image" },
       { key: "services", label: "Related service web addresses (one per line)", type: "list" },
       { key: "background", label: "Background", type: "textarea" },
       { key: "goal", label: "Goal", type: "textarea" },
@@ -71,7 +117,7 @@ const SECTIONS: Section[] = [
       { key: "role", label: "My role", type: "textarea" },
       { key: "process", label: "Process", type: "textarea" },
       { key: "results", label: "Results", type: "textarea" },
-      { key: "gallery", label: "Gallery image links (one per line)", type: "list" },
+      { key: "gallery", label: "Gallery photos", type: "images" },
       { key: "sort_order", label: "Order", type: "number" },
     ],
   },
@@ -208,7 +254,7 @@ function RowForm({ section, row, onDone }: { section: Section; row: Row; onDone:
     e.preventDefault();
     setErr("");
     const payload: Row = {};
-    for (const f of section.fields) payload[f.key] = vals[f.key] ?? (f.type === "list" ? [] : f.type === "bool" ? false : null);
+    for (const f of section.fields) payload[f.key] = vals[f.key] ?? (f.type === "list" || f.type === "images" ? [] : f.type === "bool" ? false : null);
     if ("updated_at" in row || section.table === "services") payload["updated_at"] = new Date().toISOString();
     const q = row.id
       ? supabase.from(section.table).update(payload as never).eq("id", row.id)
@@ -236,6 +282,12 @@ function RowForm({ section, row, onDone }: { section: Section; row: Row; onDone:
                 onChange={(e) => set(f.key, e.target.value.split("\n").map((s) => s.trim()).filter(Boolean))} />
             )}
             {f.type === "bool" && <div><Switch id={id} checked={!!v} onCheckedChange={(c) => set(f.key, c)} /></div>}
+            {f.type === "image" && (
+              <PhotoField id={id} multiple={false} value={v ? [v as string] : []} onChange={(a) => set(f.key, a[0] ?? null)} />
+            )}
+            {f.type === "images" && (
+              <PhotoField id={id} multiple value={(v as string[]) ?? []} onChange={(a) => set(f.key, a)} />
+            )}
             {f.type === "select" && (
               <select id={id} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                 value={(v as string) ?? ""} onChange={(e) => set(f.key, e.target.value)}>
