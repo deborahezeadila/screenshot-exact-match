@@ -186,8 +186,8 @@ function TableEditor({ section }: { section: Section }) {
         <div key={r.id} className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-4">
           <div className="min-w-0">
             <p className="truncate font-medium">{String(r[section.titleKey] ?? "")}</p>
-            {"status" in r && <p className="text-xs text-muted-foreground">{String(r.status)}</p>}
-            {"published" in r && <p className="text-xs text-muted-foreground">{r.published ? "Visible" : "Hidden"}</p>}
+            {"status" in r && <p className="text-xs text-muted-foreground">{String(r["status"])}</p>}
+            {"published" in r && <p className="text-xs text-muted-foreground">{r["published"] ? "Visible" : "Hidden"}</p>}
           </div>
           <div className="flex shrink-0 gap-2">
             <Button size="sm" variant="outline" onClick={() => setEditing(r)}>Edit</Button>
@@ -209,7 +209,7 @@ function RowForm({ section, row, onDone }: { section: Section; row: Row; onDone:
     setErr("");
     const payload: Row = {};
     for (const f of section.fields) payload[f.key] = vals[f.key] ?? (f.type === "list" ? [] : f.type === "bool" ? false : null);
-    if ("updated_at" in row || section.table === "services") payload.updated_at = new Date().toISOString();
+    if ("updated_at" in row || section.table === "services") payload["updated_at"] = new Date().toISOString();
     const q = row.id
       ? supabase.from(section.table).update(payload as never).eq("id", row.id)
       : supabase.from(section.table).insert(payload as never);
