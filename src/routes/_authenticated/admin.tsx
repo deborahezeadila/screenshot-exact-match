@@ -60,7 +60,7 @@ const SECTIONS: Section[] = [
       { key: "title", label: "Title", type: "text" },
       { key: "slug", label: "Web address", type: "text" },
       { key: "status", label: "Status", type: "select", options: ["draft", "published"] },
-      { key: "project_type", label: "Type", type: "select", options: ["concept", "client"] },
+      { key: "project_type", label: "Type", type: "select", options: ["concept", "client", "practice"] },
       { key: "featured", label: "Show on home page", type: "bool" },
       { key: "summary", label: "Summary", type: "textarea" },
       { key: "cover_url", label: "Cover image link", type: "text" },
