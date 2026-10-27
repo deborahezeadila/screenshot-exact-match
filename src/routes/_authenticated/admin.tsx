@@ -283,10 +283,10 @@ function TableEditor({ section }: { section: Section }) {
           <div className="flex shrink-0 gap-2">
             {section.table === "projects" && <>
               <Button size="icon" variant="outline" disabled={savingOrder || index === 0}
-                title={`Move ${String(r.title)} up`} aria-label={`Move ${String(r.title)} up`}
+                title={`Move ${String(r["title"])} up`} aria-label={`Move ${String(r["title"])} up`}
                 onClick={() => setOrdered(reorderProjects(displayRows, index, -1))}><ArrowUp className="h-4 w-4" /></Button>
               <Button size="icon" variant="outline" disabled={savingOrder || index === displayRows.length - 1}
-                title={`Move ${String(r.title)} down`} aria-label={`Move ${String(r.title)} down`}
+                title={`Move ${String(r["title"])} down`} aria-label={`Move ${String(r["title"])} down`}
                 onClick={() => setOrdered(reorderProjects(displayRows, index, 1))}><ArrowDown className="h-4 w-4" /></Button>
             </>}
             <Button size="sm" variant="outline" disabled={!!ordered || savingOrder} onClick={() => setEditing(r)}>Edit</Button>
