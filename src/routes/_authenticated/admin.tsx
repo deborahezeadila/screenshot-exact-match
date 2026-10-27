@@ -9,6 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SOCIAL_KEYS } from "@/lib/queries";
+import { ArrowLeft, ArrowRight, X } from "lucide-react";
+import { moveGalleryPhoto } from "@/lib/gallery-order";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -58,10 +60,21 @@ function PhotoField({ id, multiple, value, onChange }: { id: string; multiple: b
       {value.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {value.map((u, i) => (
-            <div key={u + i} className="relative">
-              <img src={u} alt="" className="h-24 w-24 rounded-md border border-border object-cover" />
-              <button type="button" onClick={() => onChange(value.filter((_, j) => j !== i))}
-                className="absolute -right-2 -top-2 rounded-full bg-destructive px-2 text-xs text-destructive-foreground" aria-label="Remove photo">×</button>
+            <div key={u + i} className="w-28 space-y-1.5">
+              <img src={u} alt={`Photo ${i + 1}`} className="h-28 w-28 rounded-md border border-border object-cover" />
+              <div className="flex items-center justify-between gap-1">
+                {multiple && <>
+                  <Button type="button" size="icon" variant="outline" className="h-8 w-8" disabled={busy || i === 0}
+                    title={`Move photo ${i + 1} earlier`} aria-label={`Move photo ${i + 1} earlier`}
+                    onClick={() => onChange(moveGalleryPhoto(value, i, -1))}><ArrowLeft className="h-4 w-4" /></Button>
+                  <Button type="button" size="icon" variant="outline" className="h-8 w-8" disabled={busy || i === value.length - 1}
+                    title={`Move photo ${i + 1} later`} aria-label={`Move photo ${i + 1} later`}
+                    onClick={() => onChange(moveGalleryPhoto(value, i, 1))}><ArrowRight className="h-4 w-4" /></Button>
+                </>}
+                <Button type="button" size="icon" variant="ghost" className="h-8 w-8 text-destructive" disabled={busy}
+                  title={`Remove photo ${i + 1}`} aria-label={`Remove photo ${i + 1}`}
+                  onClick={() => onChange(value.filter((_, j) => j !== i))}><X className="h-4 w-4" /></Button>
+              </div>
             </div>
           ))}
         </div>
@@ -237,7 +250,7 @@ function TableEditor({ section }: { section: Section }) {
           </div>
           <div className="flex shrink-0 gap-2">
             <Button size="sm" variant="outline" onClick={() => setEditing(r)}>Edit</Button>
-            <Button size="sm" variant="ghost" onClick={() => remove(r.id!)}>Delete</Button>
+            <Button size="sm" variant="ghost" onClick={() => { if (r.id) remove(r.id); }}>Delete</Button>
           </div>
         </div>
       ))}
@@ -291,7 +304,7 @@ function RowForm({ section, row, onDone }: { section: Section; row: Row; onDone:
             {f.type === "select" && (
               <select id={id} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                 value={(v as string) ?? ""} onChange={(e) => set(f.key, e.target.value)}>
-                {f.options!.map((o) => <option key={o} value={o}>{o}</option>)}
+                {f.options?.map((o) => <option key={o} value={o}>{o}</option>)}
               </select>
             )}
           </div>
@@ -325,7 +338,8 @@ function SettingsEditor() {
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
-    const rows = SETTING_KEYS.map((key) => ({ key, value: (vals![key] ?? "").trim(), updated_at: new Date().toISOString() }));
+    if (!vals) return;
+    const rows = SETTING_KEYS.map((key) => ({ key, value: (vals[key] ?? "").trim(), updated_at: new Date().toISOString() }));
     const { error } = await supabase.from("site_settings").upsert(rows, { onConflict: "key" });
     setMsg(error ? error.message : "Saved.");
   }
