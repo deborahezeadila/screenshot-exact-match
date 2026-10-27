@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Portfolio galleries use their stored array order for both dashboard previews and project-page rendering; keep reorder logic immutable in a shared helper to preserve that order.
+- Portfolio project arrows stage an immutable list until Save order persists all positions in one request; public portfolio reads use the existing sort_order field.
