@@ -9,8 +9,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SOCIAL_KEYS } from "@/lib/queries";
-import { ArrowLeft, ArrowRight, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUp, ArrowDown, X } from "lucide-react";
 import { moveGalleryPhoto } from "@/lib/gallery-order";
+import { reorderProjects, withProjectPositions } from "@/lib/project-order";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -219,14 +220,38 @@ type Row = Record<string, unknown> & { id?: string };
 
 function TableEditor({ section }: { section: Section }) {
   const [editing, setEditing] = useState<Row | null>(null);
+  const [ordered, setOrdered] = useState<Row[] | null>(null);
+  const [savingOrder, setSavingOrder] = useState(false);
+  const [orderError, setOrderError] = useState("");
+  const qc = useQueryClient();
   const { data: rows = [], refetch } = useQuery({
     queryKey: ["admin", section.table],
     queryFn: async () => {
-      const { data, error } = await supabase.from(section.table).select("*").order("created_at");
+      let query = supabase.from(section.table).select("*");
+      if (section.table === "projects") query = query.order("sort_order");
+      const { data, error } = await query.order("created_at").order("id");
       if (error) throw error;
       return data as Row[];
     },
   });
+
+  const displayRows = ordered ?? rows;
+
+  async function saveOrder() {
+    if (!ordered || section.table !== "projects") return;
+    setSavingOrder(true);
+    setOrderError("");
+    try {
+      const { data, error } = await supabase.from("projects").upsert(withProjectPositions(ordered) as never, { onConflict: "id" }).select("id");
+      if (error) throw error;
+      if (data.length !== ordered.length) throw new Error("Your project order could not be saved. Please try again.");
+      await refetch();
+      setOrdered(null);
+      await qc.invalidateQueries({ queryKey: ["projects"] });
+    } catch (error) {
+      setOrderError(error instanceof Error ? error.message : "Your project order could not be saved. Please try again.");
+    } finally { setSavingOrder(false); }
+  }
 
   async function remove(id: string) {
     if (!confirm("Delete this item?")) return;
@@ -239,18 +264,33 @@ function TableEditor({ section }: { section: Section }) {
 
   return (
     <div className="mt-6 space-y-3">
-      <Button onClick={() => setEditing({ ...section.defaults })}>Add new</Button>
+      <div className="flex flex-wrap gap-2">
+        <Button disabled={!!ordered || savingOrder} onClick={() => setEditing({ ...section.defaults })}>Add new</Button>
+        {ordered && <>
+          <Button disabled={savingOrder} onClick={saveOrder}>{savingOrder ? "Saving…" : "Save order"}</Button>
+          <Button variant="outline" disabled={savingOrder} onClick={() => { setOrdered(null); setOrderError(""); }}>Cancel</Button>
+        </>}
+      </div>
+      {orderError && <p role="alert" className="text-sm text-destructive">{orderError}</p>}
       {rows.length === 0 && <p className="text-muted-foreground">Nothing here yet.</p>}
-      {rows.map((r) => (
-        <div key={r.id} className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-4">
+      {displayRows.map((r, index) => (
+        <div key={r.id} className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-border bg-card p-4">
           <div className="min-w-0">
             <p className="truncate font-medium">{String(r[section.titleKey] ?? "")}</p>
             {"status" in r && <p className="text-xs text-muted-foreground">{String(r["status"])}</p>}
             {"published" in r && <p className="text-xs text-muted-foreground">{r["published"] ? "Visible" : "Hidden"}</p>}
           </div>
           <div className="flex shrink-0 gap-2">
-            <Button size="sm" variant="outline" onClick={() => setEditing(r)}>Edit</Button>
-            <Button size="sm" variant="ghost" onClick={() => { if (r.id) remove(r.id); }}>Delete</Button>
+            {section.table === "projects" && <>
+              <Button size="icon" variant="outline" disabled={savingOrder || index === 0}
+                title={`Move ${String(r["title"])} up`} aria-label={`Move ${String(r["title"])} up`}
+                onClick={() => setOrdered(reorderProjects(displayRows, index, -1))}><ArrowUp className="h-4 w-4" /></Button>
+              <Button size="icon" variant="outline" disabled={savingOrder || index === displayRows.length - 1}
+                title={`Move ${String(r["title"])} down`} aria-label={`Move ${String(r["title"])} down`}
+                onClick={() => setOrdered(reorderProjects(displayRows, index, 1))}><ArrowDown className="h-4 w-4" /></Button>
+            </>}
+            <Button size="sm" variant="outline" disabled={!!ordered || savingOrder} onClick={() => setEditing(r)}>Edit</Button>
+            <Button size="sm" variant="ghost" disabled={!!ordered || savingOrder} onClick={() => { if (r.id) remove(r.id); }}>Delete</Button>
           </div>
         </div>
       ))}
