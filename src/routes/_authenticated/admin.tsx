@@ -289,6 +289,11 @@ function TableEditor({ section }: { section: Section }) {
                 title={`Move ${String(r["title"])} down`} aria-label={`Move ${String(r["title"])} down`}
                 onClick={() => setOrdered(reorderProjects(displayRows, index, 1))}><ArrowDown className="h-4 w-4" /></Button>
             </>}
+            {section.table === "services" && typeof r["slug"] === "string" && r["slug"] && (
+              <Button size="sm" variant="outline" asChild>
+                <a href={`/services/${encodeURIComponent(String(r["slug"]))}?preview=1`} target="_blank" rel="noopener noreferrer">Preview</a>
+              </Button>
+            )}
             <Button size="sm" variant="outline" disabled={!!ordered || savingOrder} onClick={() => setEditing(r)}>Edit</Button>
             <Button size="sm" variant="ghost" disabled={!!ordered || savingOrder} onClick={() => { if (r.id) remove(r.id); }}>Delete</Button>
           </div>
