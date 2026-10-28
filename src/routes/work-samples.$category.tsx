@@ -1,17 +1,18 @@
+
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { PageHero, ContactCta, ProjectCard, EmptyState } from "@/components/site/blocks";
-import { getCategory } from "@/lib/work-categories";
+import { getReadyCategory } from "@/lib/work-categories";
 import { workSamplesQuery } from "@/lib/queries";
 import { seo } from "@/lib/seo";
 
 export const Route = createFileRoute("/work-samples/$category")({
   loader: async ({ context, params }) => {
-    if (!getCategory(params.category)) throw notFound();
+    if (!getReadyCategory(params.category)) throw notFound();
     await context.queryClient.ensureQueryData(workSamplesQuery(params.category));
   },
   head: ({ params }) => {
-    const c = getCategory(params.category);
+    const c = getReadyCategory(params.category);
     return c ? seo(`${c.name} Work Samples`, c.description) : seo("Work Samples", "This category isn't available.");
   },
   errorComponent: () => <p role="alert" className="container-site py-16">Samples could not be loaded. Please try again.</p>,
@@ -29,7 +30,7 @@ function Unavailable() {
 
 function Page() {
   const { category } = Route.useParams();
-  const cat = getCategory(category);
+  const cat = getReadyCategory(category);
   const { data } = useSuspenseQuery(workSamplesQuery(category));
   if (!cat) return <Unavailable />;
   return (
