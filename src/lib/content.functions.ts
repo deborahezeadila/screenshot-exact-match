@@ -154,3 +154,26 @@ export const getSubstackPosts = createServerFn({ method: "GET" }).handler(async 
     return { configured: true, url: base, posts: [] as BlogPost[] };
   }
 });
+
+export const getWorkSamples = createServerFn({ method: "GET" })
+  .inputValidator(z.object({ categorySlug: z.string().max(80) }))
+  .handler(async ({ data }) => {
+    const { getCategory, selectSamples } = await import("./work-categories");
+    const cat = getCategory(data.categorySlug);
+    if (!cat) return { found: false, samples: [] };
+    const db = createPublicClient();
+    const { data: svc } = await db
+      .from("services")
+      .select("slug")
+      .eq("category", cat.serviceCategory)
+      .eq("status", "published");
+    const slugs = (svc ?? []).map((s) => s.slug);
+    if (!slugs.length) return { found: true, samples: [] };
+    const { data: projects } = await db
+      .from("projects")
+      .select("id,slug,title,summary,cover_url,project_type,services")
+      .eq("status", "published")
+      .overlaps("services", slugs)
+      .order("sort_order");
+    return { found: true, samples: selectSamples(slugs, projects ?? []) };
+  });

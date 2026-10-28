@@ -9,6 +9,7 @@ import {
   getSettings,
   getSubstackPosts,
   getTestimonials,
+  getWorkSamples,
 } from "./content.functions";
 
 export const settingsQuery = queryOptions({ queryKey: ["settings"], queryFn: () => getSettings(), staleTime: 60_000 });
@@ -35,3 +36,6 @@ export function whatsappLink(raw?: string) {
 export function formatPrice(n: number) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
 }
+
+export const workSamplesQuery = (categorySlug: string) =>
+  queryOptions({ queryKey: ["work-samples", categorySlug], queryFn: () => getWorkSamples({ data: { categorySlug } }) });
