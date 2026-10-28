@@ -1,23 +1,37 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { Check } from "lucide-react";
 import { PageHero, ContactCta } from "@/components/site/blocks";
 import { Button } from "@/components/ui/button";
 import { useContact } from "@/components/site/contact-context";
-import { serviceQuery, formatPrice } from "@/lib/queries";
+import { serviceQuery, processQuery, formatPrice } from "@/lib/queries";
+import { videoEmbedUrl } from "@/lib/video-embed";
+import { supabase } from "@/integrations/supabase/client";
+import type { Service } from "@/lib/content.functions";
 import { seo } from "@/lib/seo";
 
 const SITE = "https://deborahezeadila.lovable.app";
+type Step = { id: string; title: string; description: string };
 
 export const Route = createFileRoute("/services/$slug")({
-  loader: ({ context, params }) => context.queryClient.ensureQueryData(serviceQuery(params.slug)),
+  validateSearch: zodValidator(z.object({ preview: fallback(z.number().optional(), undefined) })),
+  loaderDeps: ({ search }) => ({ preview: search.preview === 1 }),
+  loader: async ({ context, params, deps }) => {
+    await context.queryClient.ensureQueryData(processQuery);
+    if (deps.preview) return { preview: true as const, service: null };
+    const data = await context.queryClient.ensureQueryData(serviceQuery(params.slug));
+    if (!data) throw notFound();
+    return { preview: false as const, service: data.service };
+  },
   head: ({ params, loaderData }) => {
     const s = loaderData?.service;
-    const base = s ? seo(s.title, s.summary) : seo("Service unavailable", "This service page isn't available.");
+    const base = s ? seo(s.title, s.summary) : seo(loaderData?.preview ? "Preview" : "Service unavailable", "This service page isn't available.");
     return {
       ...base,
       meta: s ? base.meta : [...base.meta, { name: "robots", content: "noindex" }],
-      links: [{ rel: "canonical", href: `${SITE}/services/${params.slug}` }],
+      links: s ? [{ rel: "canonical", href: `${SITE}/services/${params.slug}` }] : [],
     };
   },
   errorComponent: () => <p role="alert" className="container-site py-16">This service could not be loaded. Please try again.</p>,
@@ -27,9 +41,50 @@ export const Route = createFileRoute("/services/$slug")({
 
 function Unavailable() {
   return (
-    <PageHero eyebrow="Service" title="This service page isn't available" intro="It may have moved or isn't published yet.">
-      <Link to="/shopify-services" className="mt-6 inline-block font-semibold text-berry hover:underline">Browse Shopify services →</Link>
-    </PageHero>
+    <>
+      <PageHero eyebrow="Service" title="This service page isn't available" intro="It may have moved or isn't published yet.">
+        <Link to="/shopify-services" className="mt-6 inline-block font-semibold text-berry hover:underline">Browse Shopify services →</Link>
+      </PageHero>
+      <ContactCta />
+    </>
+  );
+}
+
+function ServicePage() {
+  const { preview } = Route.useLoaderData();
+  return preview ? <PreviewPage /> : <PublicPage />;
+}
+
+function PublicPage() {
+  const { slug } = Route.useParams();
+  const { data } = useSuspenseQuery(serviceQuery(slug));
+  const { data: steps } = useSuspenseQuery(processQuery);
+  if (!data) return <Unavailable />;
+  return <ServiceBody s={data.service} steps={steps} />;
+}
+
+/** Loads through the browser client so only a signed-in admin's session can see drafts (RLS). */
+function PreviewPage() {
+  const { slug } = Route.useParams();
+  const { data: steps } = useSuspenseQuery(processQuery);
+  const q = useQuery({
+    queryKey: ["service-preview", slug],
+    queryFn: async () => {
+      const { data: u } = await supabase.auth.getUser();
+      if (!u.user) return null;
+      const { data } = await supabase.from("services").select("*").eq("slug", slug).maybeSingle();
+      return (data as Service & { status: string } | null) ?? null;
+    },
+  });
+  if (q.isPending) return <p className="container-site py-16 text-muted-foreground">Loading preview…</p>;
+  if (!q.data) return <Unavailable />;
+  return (
+    <>
+      {q.data.status !== "published" && (
+        <div role="status" className="bg-berry py-2 text-center text-sm font-semibold text-petal">Draft preview — not visible to visitors</div>
+      )}
+      <ServiceBody s={q.data} steps={steps} />
+    </>
   );
 }
 
@@ -52,13 +107,10 @@ function List({ items }: { items: string[] }) {
   );
 }
 
-function ServicePage() {
-  const { slug } = Route.useParams();
-  const { data } = useSuspenseQuery(serviceQuery(slug));
+function ServiceBody({ s, steps }: { s: Service; steps: Step[] }) {
   const { open } = useContact();
-  if (!data) return <><Unavailable /><ContactCta /></>;
-  const s = data.service;
   const hasPrice = s.pricing_type === "starting" && typeof s.starting_price === "number";
+  const embed = videoEmbedUrl(s.video_url);
   return (
     <>
       <PageHero eyebrow="Service" title={s.title} intro={s.hero_headline || s.title} />
@@ -69,6 +121,16 @@ function ServicePage() {
           {s.included.length > 0 && <Block title="What's included"><List items={s.included} /></Block>}
           {s.deliverables.length > 0 && <Block title="Deliverables"><List items={s.deliverables} /></Block>}
           {s.approach && <Block title="My approach"><p className="whitespace-pre-line">{s.approach}</p></Block>}
+          {embed ? (
+            <div className="aspect-video w-full overflow-hidden rounded-2xl border border-border bg-card">
+              <iframe src={embed} title={`Video: ${s.title}`} loading="lazy" allowFullScreen
+                referrerPolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                className="h-full w-full" />
+            </div>
+          ) : s.video_url ? (
+            <a href={s.video_url} target="_blank" rel="noopener noreferrer" className="inline-block font-semibold text-berry hover:underline">Watch the video</a>
+          ) : null}
         </div>
         <aside className="min-w-0">
           <div className="rounded-2xl border border-border bg-secondary/60 p-6 lg:sticky lg:top-24">
@@ -81,6 +143,20 @@ function ServicePage() {
           </div>
         </aside>
       </section>
+      {steps.length > 0 && (
+        <section className="container-site pb-4">
+          <h2 className="text-3xl text-oxblood md:text-4xl">My process</h2>
+          <ol className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {steps.map((st, i) => (
+              <li key={st.id} className="rounded-2xl border border-border bg-card p-6 shadow-card">
+                <span className="font-display text-3xl text-blush">{i + 1}</span>
+                <h3 className="mt-2 text-xl text-oxblood">{st.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{st.description}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
       <ContactCta />
     </>
   );
