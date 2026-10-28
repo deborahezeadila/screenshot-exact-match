@@ -1,13 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { PageHero, ContactCta } from "@/components/site/blocks";
-import { seo } from "@/lib/seo";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { serviceRedirectTarget } from "@/lib/work-categories";
 
 export const Route = createFileRoute("/other-services/$slug")({
-  head: () => seo("Service", "Service details from Deborah Ezeadila."),
-  component: () => (
-    <>
-      <PageHero eyebrow="Service" title="Service" intro="Service details from Deborah Ezeadila." />
-      <ContactCta />
-    </>
-  ),
+  beforeLoad: ({ params }) => {
+    throw redirect({ ...serviceRedirectTarget(params.slug), statusCode: 301 });
+  },
 });

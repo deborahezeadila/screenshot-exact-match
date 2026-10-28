@@ -36,9 +36,8 @@ export function SectionHeading({ eyebrow, title, intro, light }: { eyebrow: stri
 type ServiceLite = { slug: string; title: string; summary: string; category: string };
 
 export function ServiceCard({ s, index }: { s: ServiceLite; index?: number }) {
-  const to = s.category === "other" ? "/other-services/$slug" : "/shopify-services/$slug";
   return (
-    <Link to={to} params={{ slug: s.slug }}
+    <Link to="/services/$slug" params={{ slug: s.slug }}
       className="group flex h-full flex-col rounded-2xl border border-border bg-card p-6 shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-berry/40">
       {index !== undefined && <span className="font-display text-3xl text-blush transition-colors group-hover:text-berry">{String(index + 1).padStart(2, "0")}</span>}
       <h3 className="mt-4 text-xl text-oxblood">{s.title}</h3>
