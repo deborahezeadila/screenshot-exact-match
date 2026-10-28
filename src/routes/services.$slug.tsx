@@ -1,7 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
-import { z } from "zod";
+
 import { Check } from "lucide-react";
 import { PageHero, ContactCta } from "@/components/site/blocks";
 import { Button } from "@/components/ui/button";
@@ -16,8 +15,10 @@ const SITE = "https://deborahezeadila.lovable.app";
 type Step = { id: string; title: string; description: string };
 
 export const Route = createFileRoute("/services/$slug")({
-  validateSearch: zodValidator(z.object({ preview: fallback(z.number().optional(), undefined) })),
-  loaderDeps: ({ search }) => ({ preview: search.preview === 1 }),
+ validateSearch: (search: Record<string, unknown>) => ({
+  preview: search.preview === "1" || search.preview === 1,
+}), 
+  loaderDeps: ({ search }) => ({ preview: search.preview }),
   loader: async ({ context, params, deps }) => {
     await context.queryClient.ensureQueryData(processQuery);
     if (deps.preview) return { preview: true as const, service: null };
