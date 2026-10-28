@@ -61,7 +61,7 @@ function ServicePage() {
   const hasPrice = s.pricing_type === "starting" && typeof s.starting_price === "number";
   return (
     <>
-      <PageHero eyebrow="Service" title={s.title} intro={s.hero_headline || undefined} />
+      <PageHero eyebrow="Service" title={s.title} intro={s.hero_headline || s.title} />
       <section className="container-site grid gap-8 py-12 md:py-16 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <div className="min-w-0 space-y-6">
           {s.summary && <p className="text-lg leading-relaxed text-plum">{s.summary}</p>}
