@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { PageHero, ContactCta, ProjectCard, EmptyState } from "@/components/site/blocks";
 import { getCategory } from "@/lib/work-categories";
@@ -6,7 +6,10 @@ import { workSamplesQuery } from "@/lib/queries";
 import { seo } from "@/lib/seo";
 
 export const Route = createFileRoute("/work-samples/$category")({
-  loader: ({ context, params }) => context.queryClient.ensureQueryData(workSamplesQuery(params.category)),
+  loader: async ({ context, params }) => {
+    if (!getCategory(params.category)) throw notFound();
+    await context.queryClient.ensureQueryData(workSamplesQuery(params.category));
+  },
   head: ({ params }) => {
     const c = getCategory(params.category);
     return c ? seo(`${c.name} Work Samples`, c.description) : seo("Work Samples", "This category isn't available.");
