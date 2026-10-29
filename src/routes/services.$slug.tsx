@@ -15,10 +15,10 @@ const SITE = "https://deborahezeadila.lovable.app";
 type Step = { id: string; title: string; description: string };
 
 export const Route = createFileRoute("/services/$slug")({
- validateSearch: (search: Record<string, unknown>) => ({
-  preview: search.preview === "1" || search.preview === 1,
+ validateSearch: (search: Record<string, unknown>): { preview?: boolean } => ({
+  preview: search["preview"] === "1" || search["preview"] === 1,
 }), 
-  loaderDeps: ({ search }) => ({ preview: search.preview }),
+  loaderDeps: ({ search }) => ({ preview: search["preview"] }),
   loader: async ({ context, params, deps }) => {
     await context.queryClient.ensureQueryData(processQuery);
     if (deps.preview) return { preview: true as const, service: null };
