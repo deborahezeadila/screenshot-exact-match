@@ -27,6 +27,8 @@ import { Route as PortfolioSlugRouteImport } from './routes/portfolio.$slug'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 import { Route as ShopifyServicesIndexRouteImport } from './routes/shopify-services.index'
 import { Route as ShopifyServicesSlugRouteImport } from './routes/shopify-services.$slug'
+import { Route as ShopifyStoreDesignSamplesIndexRouteImport } from './routes/shopify-store-design-samples.index'
+import { Route as ShopifyStoreDesignSamplesSlugRouteImport } from './routes/shopify-store-design-samples.$slug'
 import { Route as WorkSamplesIndexRouteImport } from './routes/work-samples.index'
 import { Route as WorkSamplesCategoryRouteImport } from './routes/work-samples.$category'
 
@@ -119,6 +121,18 @@ const ShopifyServicesSlugRoute = ShopifyServicesSlugRouteImport.update({
   path: '/shopify-services/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShopifyStoreDesignSamplesIndexRoute =
+  ShopifyStoreDesignSamplesIndexRouteImport.update({
+    id: '/shopify-store-design-samples/',
+    path: '/shopify-store-design-samples/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ShopifyStoreDesignSamplesSlugRoute =
+  ShopifyStoreDesignSamplesSlugRouteImport.update({
+    id: '/shopify-store-design-samples/$slug',
+    path: '/shopify-store-design-samples/$slug',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const WorkSamplesIndexRoute = WorkSamplesIndexRouteImport.update({
   id: '/work-samples/',
   path: '/work-samples/',
@@ -145,10 +159,12 @@ export interface FileRoutesByFullPath {
   '/portfolio/$slug': typeof PortfolioSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/shopify-services/$slug': typeof ShopifyServicesSlugRoute
+  '/shopify-store-design-samples/$slug': typeof ShopifyStoreDesignSamplesSlugRoute
   '/work-samples/$category': typeof WorkSamplesCategoryRoute
   '/other-services/': typeof OtherServicesIndexRoute
   '/portfolio/': typeof PortfolioIndexRoute
   '/shopify-services/': typeof ShopifyServicesIndexRoute
+  '/shopify-store-design-samples/': typeof ShopifyStoreDesignSamplesIndexRoute
   '/work-samples/': typeof WorkSamplesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -166,10 +182,12 @@ export interface FileRoutesByTo {
   '/portfolio/$slug': typeof PortfolioSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/shopify-services/$slug': typeof ShopifyServicesSlugRoute
+  '/shopify-store-design-samples/$slug': typeof ShopifyStoreDesignSamplesSlugRoute
   '/work-samples/$category': typeof WorkSamplesCategoryRoute
   '/other-services': typeof OtherServicesIndexRoute
   '/portfolio': typeof PortfolioIndexRoute
   '/shopify-services': typeof ShopifyServicesIndexRoute
+  '/shopify-store-design-samples': typeof ShopifyStoreDesignSamplesIndexRoute
   '/work-samples': typeof WorkSamplesIndexRoute
 }
 export interface FileRoutesById {
@@ -189,10 +207,12 @@ export interface FileRoutesById {
   '/portfolio/$slug': typeof PortfolioSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/shopify-services/$slug': typeof ShopifyServicesSlugRoute
+  '/shopify-store-design-samples/$slug': typeof ShopifyStoreDesignSamplesSlugRoute
   '/work-samples/$category': typeof WorkSamplesCategoryRoute
   '/other-services/': typeof OtherServicesIndexRoute
   '/portfolio/': typeof PortfolioIndexRoute
   '/shopify-services/': typeof ShopifyServicesIndexRoute
+  '/shopify-store-design-samples/': typeof ShopifyStoreDesignSamplesIndexRoute
   '/work-samples/': typeof WorkSamplesIndexRoute
 }
 export interface FileRouteTypes {
@@ -212,10 +232,12 @@ export interface FileRouteTypes {
     | '/portfolio/$slug'
     | '/services/$slug'
     | '/shopify-services/$slug'
+    | '/shopify-store-design-samples/$slug'
     | '/work-samples/$category'
     | '/other-services/'
     | '/portfolio/'
     | '/shopify-services/'
+    | '/shopify-store-design-samples/'
     | '/work-samples/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -233,10 +255,12 @@ export interface FileRouteTypes {
     | '/portfolio/$slug'
     | '/services/$slug'
     | '/shopify-services/$slug'
+    | '/shopify-store-design-samples/$slug'
     | '/work-samples/$category'
     | '/other-services'
     | '/portfolio'
     | '/shopify-services'
+    | '/shopify-store-design-samples'
     | '/work-samples'
   id:
     | '__root__'
@@ -255,10 +279,12 @@ export interface FileRouteTypes {
     | '/portfolio/$slug'
     | '/services/$slug'
     | '/shopify-services/$slug'
+    | '/shopify-store-design-samples/$slug'
     | '/work-samples/$category'
     | '/other-services/'
     | '/portfolio/'
     | '/shopify-services/'
+    | '/shopify-store-design-samples/'
     | '/work-samples/'
   fileRoutesById: FileRoutesById
 }
@@ -277,10 +303,12 @@ export interface RootRouteChildren {
   PortfolioSlugRoute: typeof PortfolioSlugRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
   ShopifyServicesSlugRoute: typeof ShopifyServicesSlugRoute
+  ShopifyStoreDesignSamplesSlugRoute: typeof ShopifyStoreDesignSamplesSlugRoute
   WorkSamplesCategoryRoute: typeof WorkSamplesCategoryRoute
   OtherServicesIndexRoute: typeof OtherServicesIndexRoute
   PortfolioIndexRoute: typeof PortfolioIndexRoute
   ShopifyServicesIndexRoute: typeof ShopifyServicesIndexRoute
+  ShopifyStoreDesignSamplesIndexRoute: typeof ShopifyStoreDesignSamplesIndexRoute
   WorkSamplesIndexRoute: typeof WorkSamplesIndexRoute
 }
 
@@ -412,6 +440,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopifyServicesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/shopify-store-design-samples/': {
+      id: '/shopify-store-design-samples/'
+      path: '/shopify-store-design-samples'
+      fullPath: '/shopify-store-design-samples/'
+      preLoaderRoute: typeof ShopifyStoreDesignSamplesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shopify-store-design-samples/$slug': {
+      id: '/shopify-store-design-samples/$slug'
+      path: '/shopify-store-design-samples/$slug'
+      fullPath: '/shopify-store-design-samples/$slug'
+      preLoaderRoute: typeof ShopifyStoreDesignSamplesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/work-samples/': {
       id: '/work-samples/'
       path: '/work-samples'
@@ -455,10 +497,12 @@ const rootRouteChildren: RootRouteChildren = {
   PortfolioSlugRoute: PortfolioSlugRoute,
   ServicesSlugRoute: ServicesSlugRoute,
   ShopifyServicesSlugRoute: ShopifyServicesSlugRoute,
+  ShopifyStoreDesignSamplesSlugRoute: ShopifyStoreDesignSamplesSlugRoute,
   WorkSamplesCategoryRoute: WorkSamplesCategoryRoute,
   OtherServicesIndexRoute: OtherServicesIndexRoute,
   PortfolioIndexRoute: PortfolioIndexRoute,
   ShopifyServicesIndexRoute: ShopifyServicesIndexRoute,
+  ShopifyStoreDesignSamplesIndexRoute: ShopifyStoreDesignSamplesIndexRoute,
   WorkSamplesIndexRoute: WorkSamplesIndexRoute,
 }
 export const routeTree = rootRouteImport
