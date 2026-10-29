@@ -18,7 +18,6 @@ import { Route as EmailUpdatesRouteImport } from './routes/email-updates'
 import { Route as FaqsRouteImport } from './routes/faqs'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ProcessRouteImport } from './routes/process'
-import { Route as ShopifyStoreDesignSamplesRouteImport } from './routes/shopify-store-design-samples'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as OtherServicesIndexRouteImport } from './routes/other-services.index'
@@ -75,12 +74,6 @@ const ProcessRoute = ProcessRouteImport.update({
   path: '/process',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ShopifyStoreDesignSamplesRoute =
-  ShopifyStoreDesignSamplesRouteImport.update({
-    id: '/shopify-store-design-samples',
-    path: '/shopify-store-design-samples',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -146,7 +139,6 @@ export interface FileRoutesByFullPath {
   '/faqs': typeof FaqsRoute
   '/privacy': typeof PrivacyRoute
   '/process': typeof ProcessRoute
-  '/shopify-store-design-samples': typeof ShopifyStoreDesignSamplesRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/other-services/$slug': typeof OtherServicesSlugRoute
@@ -168,7 +160,6 @@ export interface FileRoutesByTo {
   '/faqs': typeof FaqsRoute
   '/privacy': typeof PrivacyRoute
   '/process': typeof ProcessRoute
-  '/shopify-store-design-samples': typeof ShopifyStoreDesignSamplesRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/other-services/$slug': typeof OtherServicesSlugRoute
@@ -192,7 +183,6 @@ export interface FileRoutesById {
   '/faqs': typeof FaqsRoute
   '/privacy': typeof PrivacyRoute
   '/process': typeof ProcessRoute
-  '/shopify-store-design-samples': typeof ShopifyStoreDesignSamplesRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/other-services/$slug': typeof OtherServicesSlugRoute
@@ -216,7 +206,6 @@ export interface FileRouteTypes {
     | '/faqs'
     | '/privacy'
     | '/process'
-    | '/shopify-store-design-samples'
     | '/terms'
     | '/admin'
     | '/other-services/$slug'
@@ -238,7 +227,6 @@ export interface FileRouteTypes {
     | '/faqs'
     | '/privacy'
     | '/process'
-    | '/shopify-store-design-samples'
     | '/terms'
     | '/admin'
     | '/other-services/$slug'
@@ -261,7 +249,6 @@ export interface FileRouteTypes {
     | '/faqs'
     | '/privacy'
     | '/process'
-    | '/shopify-store-design-samples'
     | '/terms'
     | '/_authenticated/admin'
     | '/other-services/$slug'
@@ -285,7 +272,6 @@ export interface RootRouteChildren {
   FaqsRoute: typeof FaqsRoute
   PrivacyRoute: typeof PrivacyRoute
   ProcessRoute: typeof ProcessRoute
-  ShopifyStoreDesignSamplesRoute: typeof ShopifyStoreDesignSamplesRoute
   TermsRoute: typeof TermsRoute
   OtherServicesSlugRoute: typeof OtherServicesSlugRoute
   PortfolioSlugRoute: typeof PortfolioSlugRoute
@@ -361,13 +347,6 @@ declare module '@tanstack/react-router' {
       path: '/process'
       fullPath: '/process'
       preLoaderRoute: typeof ProcessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/shopify-store-design-samples': {
-      id: '/shopify-store-design-samples'
-      path: '/shopify-store-design-samples'
-      fullPath: '/shopify-store-design-samples'
-      preLoaderRoute: typeof ShopifyStoreDesignSamplesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -471,7 +450,6 @@ const rootRouteChildren: RootRouteChildren = {
   FaqsRoute: FaqsRoute,
   PrivacyRoute: PrivacyRoute,
   ProcessRoute: ProcessRoute,
-  ShopifyStoreDesignSamplesRoute: ShopifyStoreDesignSamplesRoute,
   TermsRoute: TermsRoute,
   OtherServicesSlugRoute: OtherServicesSlugRoute,
   PortfolioSlugRoute: PortfolioSlugRoute,
