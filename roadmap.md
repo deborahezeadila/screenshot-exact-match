@@ -1,0 +1,3 @@
+- [ ] Replace concept data and remove the concept illustration.
+- [ ] Update the reference listing, detail pages and tests.
+- [ ] Verify tests, preview responses, contact buttons and mobile layout.

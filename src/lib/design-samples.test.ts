@@ -1,41 +1,54 @@
 import { describe, expect, it } from "vitest";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
-import { CONCEPT_LABEL, DESIGN_SAMPLES, getDesignSample } from "./design-samples";
+import { REFERENCE_LABEL, DESIGN_SAMPLES, getDesignSample } from "./design-samples";
 
 describe("design samples", () => {
-  it("has exactly four samples with unique, url-safe slugs", () => {
-    expect(DESIGN_SAMPLES).toHaveLength(4);
+  it("has exactly three samples with unique, url-safe slugs", () => {
+    expect(DESIGN_SAMPLES).toHaveLength(3);
     const slugs = DESIGN_SAMPLES.map((s) => s.slug);
-    expect(new Set(slugs).size).toBe(4);
+    expect(new Set(slugs).size).toBe(3);
     for (const s of slugs) expect(s).toMatch(/^[a-z0-9-]+$/);
   });
 
-  it("every sample has all five non-empty breakdown fields", () => {
+  it("every sample has non-empty details and all four observation fields", () => {
     for (const s of DESIGN_SAMPLES) {
-      for (const k of ["navigation", "productPages", "mobile", "customerExperience", "recommendation"] as const) {
-        expect(s.breakdown[k].trim().length).toBeGreaterThan(0);
+      for (const k of ["storeName", "domain", "niche", "designFocus", "summary"] as const) {
+        expect(s[k].trim().length).toBeGreaterThan(0);
+      }
+      for (const k of ["navigation", "productPages", "customerExperience", "takeaway"] as const) {
+        expect(s.observations[k].trim().length).toBeGreaterThan(0);
       }
     }
   });
 
-  it("contains no external links in any text", () => {
-    const text = JSON.stringify(DESIGN_SAMPLES).toLowerCase();
-    expect(text).not.toContain("http");
-    expect(text).not.toContain("www.");
-    expect(text).not.toContain(".com");
+  it("contains no URLs in observation text", () => {
+    for (const s of DESIGN_SAMPLES) {
+      for (const text of Object.values(s.observations)) {
+        expect(text.toLowerCase()).not.toContain("http://");
+        expect(text.toLowerCase()).not.toContain("https://");
+      }
+    }
   });
 
   it("getDesignSample finds known slugs only", () => {
-    expect(getDesignSample("skincare-routine-store")?.title).toBe("Skincare Routine Store");
-    expect(getDesignSample("does-not-exist")).toBeUndefined();
+    expect(getDesignSample("rituaria")).toBe(DESIGN_SAMPLES[0]);
+    expect(getDesignSample("store-that-does-not-exist")).toBeUndefined();
+    expect(getDesignSample("skincare-routine-store")).toBeUndefined();
   });
 
-  it("uses the Concept label in both route files", () => {
-    expect(CONCEPT_LABEL).toBe("Concept");
-    for (const f of ["shopify-store-design-samples.index.tsx", "shopify-store-design-samples.$slug.tsx"]) {
-      const src = readFileSync(resolve(__dirname, "../routes", f), "utf8");
-      expect(src).toContain("{CONCEPT_LABEL}");
+  it("identifies references as not client work", () => {
+    expect(REFERENCE_LABEL).toBe("Design reference only — not my client work");
+  });
+
+  it("does not link to external domains in any design sample route", () => {
+    const routes = resolve(__dirname, "../routes");
+    const files = readdirSync(routes).filter((f) => f.startsWith("shopify-store-design-samples"));
+    expect(files.length).toBeGreaterThan(0);
+    for (const f of files) {
+      const src = readFileSync(resolve(routes, f), "utf8");
+      expect(src).not.toMatch(/(?:href|to)\s*=\s*["']http/i);
+      expect(src).not.toMatch(/(?:href|to)\s*=\s*\{\s*["'`]https?:\/\//i);
     }
   });
 });
