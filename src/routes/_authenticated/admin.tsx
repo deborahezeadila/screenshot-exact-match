@@ -205,11 +205,13 @@ function AdminPage() {
       <Tabs defaultValue="services" className="mt-8">
         <TabsList className="flex h-auto flex-wrap">
           {SECTIONS.map((s) => <TabsTrigger key={s.table} value={s.table}>{s.label}</TabsTrigger>)}
+          <TabsTrigger value="about">About Me</TabsTrigger>
           <TabsTrigger value="settings">Contact & social</TabsTrigger>
         </TabsList>
         {SECTIONS.map((s) => (
           <TabsContent key={s.table} value={s.table}><TableEditor section={s} /></TabsContent>
         ))}
+        <TabsContent value="about"><AboutEditor /></TabsContent>
         <TabsContent value="settings"><SettingsEditor /></TabsContent>
       </Tabs>
     </section>
@@ -397,6 +399,56 @@ function SettingsEditor() {
           <Input id={`s-${k}`} value={vals[k] ?? ""} onChange={(e) => setVals({ ...vals, [k]: e.target.value })} />
         </div>
       ))}
+      {msg && <p className="text-sm text-muted-foreground">{msg}</p>}
+      <Button type="submit">Save</Button>
+    </form>
+  );
+}
+
+const ABOUT_FIELDS: { key: string; label: string; long?: boolean }[] = [
+  { key: "about_title", label: "Heading" },
+  { key: "about_intro", label: "Short intro", long: true },
+  { key: "about_body", label: "Your story (blank line = new paragraph)", long: true },
+];
+
+function AboutEditor() {
+  const [vals, setVals] = useState<Record<string, string> | null>(null);
+  const [msg, setMsg] = useState("");
+  useQuery({
+    queryKey: ["admin", "about"],
+    queryFn: async () => {
+      const { data } = await supabase.from("site_settings").select("key,value").like("key", "about_%");
+      const m: Record<string, string> = {};
+      for (const r of data ?? []) m[r.key] = r.value;
+      setVals(m);
+      return m;
+    },
+  });
+  if (!vals) return null;
+  async function save(e: React.FormEvent) {
+    e.preventDefault();
+    if (!vals) return;
+    const keys = [...ABOUT_FIELDS.map((f) => f.key), "about_photo"];
+    const rows = keys.map((key) => ({ key, value: (vals[key] ?? "").trim(), updated_at: new Date().toISOString() }));
+    const { error } = await supabase.from("site_settings").upsert(rows, { onConflict: "key" });
+    setMsg(error ? error.message : "Saved.");
+  }
+  return (
+    <form onSubmit={save} className="mt-6 space-y-4 rounded-lg border border-border bg-card p-6">
+      {ABOUT_FIELDS.map((f) => (
+        <div key={f.key} className="space-y-1.5">
+          <Label htmlFor={`a-${f.key}`}>{f.label}</Label>
+          {f.long ? (
+            <Textarea id={`a-${f.key}`} rows={f.key === "about_body" ? 10 : 3} value={vals[f.key] ?? ""} onChange={(e) => setVals({ ...vals, [f.key]: e.target.value })} />
+          ) : (
+            <Input id={`a-${f.key}`} value={vals[f.key] ?? ""} onChange={(e) => setVals({ ...vals, [f.key]: e.target.value })} />
+          )}
+        </div>
+      ))}
+      <div className="space-y-1.5">
+        <Label htmlFor="a-photo">Photo</Label>
+        <PhotoField id="a-photo" multiple={false} value={vals["about_photo"] ? [vals["about_photo"]] : []} onChange={(v) => setVals({ ...vals, about_photo: v[0] ?? "" })} />
+      </div>
       {msg && <p className="text-sm text-muted-foreground">{msg}</p>}
       <Button type="submit">Save</Button>
     </form>
