@@ -1,9 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { PageHero } from "@/components/site/blocks";
-import { DesignSampleVisual } from "@/components/site/DesignSampleVisual";
 import { useContact } from "@/components/site/contact-context";
 import { Button } from "@/components/ui/button";
-import { CONCEPT_LABEL, getDesignSample } from "@/lib/design-samples";
+import { REFERENCE_LABEL, getDesignSample } from "@/lib/design-samples";
 import { seo } from "@/lib/seo";
 
 export const Route = createFileRoute("/shopify-store-design-samples/$slug")({
@@ -17,7 +16,7 @@ export const Route = createFileRoute("/shopify-store-design-samples/$slug")({
       return { meta: [...base.meta, { name: "robots", content: "noindex" }] };
     }
     return {
-      ...seo(`${s.title} Design Breakdown`, s.summary),
+      ...seo(`${s.storeName} — Design Reference`, s.summary),
       links: [{ rel: "canonical", href: `https://deborahezeadila.lovable.app/shopify-store-design-samples/${s.slug}` }],
     };
   },
@@ -40,28 +39,27 @@ function Page() {
   const s = getDesignSample(slug);
   if (!s) return <Unavailable />;
   const sections = [
-    ["Navigation", s.breakdown.navigation],
-    ["Product pages", s.breakdown.productPages],
-    ["Mobile experience", s.breakdown.mobile],
-    ["Customer experience", s.breakdown.customerExperience],
-    ["Design recommendation", s.breakdown.recommendation],
+    ["Navigation", s.observations.navigation],
+    ["Product pages", s.observations.productPages],
+    ["Customer experience", s.observations.customerExperience],
+    ["Design takeaway", s.observations.takeaway],
   ] as const;
   return (
     <>
-      <PageHero eyebrow="Design Breakdown" title={s.title} intro={s.summary}>
-        <p className="mt-5 inline-block rounded-xl bg-oxblood px-4 py-2 text-sm text-petal">
-          {CONCEPT_LABEL} — illustrative design, not a client project. Niche: {s.niche}. Design focus: {s.focus}.
-        </p>
+      <PageHero eyebrow="Design Reference" title={s.storeName} intro={s.summary}>
+        <p className="mt-5 font-semibold text-berry">{REFERENCE_LABEL}</p>
+        <p className="mt-3 text-sm text-muted-foreground">Niche: {s.niche}</p>
+        <p className="mt-2 break-words text-sm text-muted-foreground">Store: {s.domain}</p>
       </PageHero>
       <section className="container-site py-12 md:py-16">
-        <DesignSampleVisual visual={s.visual} className="mx-auto w-full max-w-2xl" />
-        <div className="mx-auto mt-12 max-w-3xl space-y-10">
+        <div className="mx-auto max-w-3xl space-y-10">
           {sections.map(([h, t]) => (
             <div key={h}>
               <h2 className="text-2xl text-oxblood md:text-3xl">{h}</h2>
               <p className="mt-3 leading-relaxed text-muted-foreground">{t}</p>
             </div>
           ))}
+          <p className="text-sm leading-relaxed text-muted-foreground">These observations are based on the store's public homepage. They are my own analysis, not work I did for this store.</p>
           <div className="flex flex-wrap items-center gap-4 border-t border-border pt-8">
             <Link to="/shopify-store-design-samples" className="font-semibold text-berry hover:underline">← Back to all samples</Link>
             <Button variant="cta" size="lg" onClick={open}>Discuss a store like this</Button>
