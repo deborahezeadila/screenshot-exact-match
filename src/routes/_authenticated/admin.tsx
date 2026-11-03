@@ -12,6 +12,7 @@ import { SOCIAL_KEYS } from "@/lib/queries";
 import { ArrowLeft, ArrowRight, ArrowUp, ArrowDown, X } from "lucide-react";
 import { moveGalleryPhoto } from "@/lib/gallery-order";
 import { reorderProjects, withProjectPositions } from "@/lib/project-order";
+import { TeamEditor } from "@/components/admin/TeamEditor";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -205,12 +206,14 @@ function AdminPage() {
       <Tabs defaultValue="services" className="mt-8">
         <TabsList className="flex h-auto flex-wrap">
           {SECTIONS.map((s) => <TabsTrigger key={s.table} value={s.table}>{s.label}</TabsTrigger>)}
+          <TabsTrigger value="team">Team</TabsTrigger>
           <TabsTrigger value="about">About Me</TabsTrigger>
           <TabsTrigger value="settings">Contact & social</TabsTrigger>
         </TabsList>
         {SECTIONS.map((s) => (
           <TabsContent key={s.table} value={s.table}><TableEditor section={s} /></TabsContent>
         ))}
+        <TabsContent value="team"><TeamEditor /></TabsContent>
         <TabsContent value="about"><AboutEditor /></TabsContent>
         <TabsContent value="settings"><SettingsEditor /></TabsContent>
       </Tabs>
