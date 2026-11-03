@@ -18,6 +18,7 @@ import { Route as EmailUpdatesRouteImport } from './routes/email-updates'
 import { Route as FaqsRouteImport } from './routes/faqs'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ProcessRouteImport } from './routes/process'
+import { Route as TeamRouteImport } from './routes/team'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as OtherServicesIndexRouteImport } from './routes/other-services.index'
@@ -74,6 +75,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const ProcessRoute = ProcessRouteImport.update({
   id: '/process',
   path: '/process',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamRoute = TeamRouteImport.update({
+  id: '/team',
+  path: '/team',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -153,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/faqs': typeof FaqsRoute
   '/privacy': typeof PrivacyRoute
   '/process': typeof ProcessRoute
+  '/team': typeof TeamRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/other-services/$slug': typeof OtherServicesSlugRoute
@@ -176,6 +183,7 @@ export interface FileRoutesByTo {
   '/faqs': typeof FaqsRoute
   '/privacy': typeof PrivacyRoute
   '/process': typeof ProcessRoute
+  '/team': typeof TeamRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/other-services/$slug': typeof OtherServicesSlugRoute
@@ -201,6 +209,7 @@ export interface FileRoutesById {
   '/faqs': typeof FaqsRoute
   '/privacy': typeof PrivacyRoute
   '/process': typeof ProcessRoute
+  '/team': typeof TeamRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/other-services/$slug': typeof OtherServicesSlugRoute
@@ -226,6 +235,7 @@ export interface FileRouteTypes {
     | '/faqs'
     | '/privacy'
     | '/process'
+    | '/team'
     | '/terms'
     | '/admin'
     | '/other-services/$slug'
@@ -249,6 +259,7 @@ export interface FileRouteTypes {
     | '/faqs'
     | '/privacy'
     | '/process'
+    | '/team'
     | '/terms'
     | '/admin'
     | '/other-services/$slug'
@@ -273,6 +284,7 @@ export interface FileRouteTypes {
     | '/faqs'
     | '/privacy'
     | '/process'
+    | '/team'
     | '/terms'
     | '/_authenticated/admin'
     | '/other-services/$slug'
@@ -298,6 +310,7 @@ export interface RootRouteChildren {
   FaqsRoute: typeof FaqsRoute
   PrivacyRoute: typeof PrivacyRoute
   ProcessRoute: typeof ProcessRoute
+  TeamRoute: typeof TeamRoute
   TermsRoute: typeof TermsRoute
   OtherServicesSlugRoute: typeof OtherServicesSlugRoute
   PortfolioSlugRoute: typeof PortfolioSlugRoute
@@ -375,6 +388,13 @@ declare module '@tanstack/react-router' {
       path: '/process'
       fullPath: '/process'
       preLoaderRoute: typeof ProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team': {
+      id: '/team'
+      path: '/team'
+      fullPath: '/team'
+      preLoaderRoute: typeof TeamRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -492,6 +512,7 @@ const rootRouteChildren: RootRouteChildren = {
   FaqsRoute: FaqsRoute,
   PrivacyRoute: PrivacyRoute,
   ProcessRoute: ProcessRoute,
+  TeamRoute: TeamRoute,
   TermsRoute: TermsRoute,
   OtherServicesSlugRoute: OtherServicesSlugRoute,
   PortfolioSlugRoute: PortfolioSlugRoute,
