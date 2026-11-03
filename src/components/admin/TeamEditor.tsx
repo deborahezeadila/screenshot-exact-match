@@ -123,7 +123,7 @@ export function TeamEditor() {
   );
 }
 
-function MemberForm({ draft, photoUrl, nextOrder, onDone }: { draft: Draft; photoUrl?: string; nextOrder: (t: Team) => number; onDone: () => void }) {
+function MemberForm({ draft, photoUrl, nextOrder, onDone }: { draft: Draft; photoUrl?: string | undefined; nextOrder: (t: Team) => number; onDone: () => void }) {
   const [d, setD] = useState<Draft>(draft);
   const [errors, setErrors] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
