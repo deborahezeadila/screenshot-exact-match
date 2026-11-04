@@ -84,7 +84,7 @@ export function TeamEditor() {
         draft={editing}
         photoUrl={editing.photo_path ? data?.photos[editing.photo_path] : undefined}
         nextOrder={(t) => rows.filter((r) => r.team === t).reduce((a, r) => Math.max(a, r.sort_order), -1) + 1}
-        onDone={async () => { setEditing(null); await refetch(); }}
+        onDone={async () => { await refetch(); setEditing(null); }}
       />
     );
 
