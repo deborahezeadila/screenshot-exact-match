@@ -155,3 +155,26 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Dark presentation tokens (homepage) */
+:root {
+  --ink: oklch(0.16 0.02 355);
+  --ink-soft: oklch(0.21 0.04 358);
+  --gradient-hero: radial-gradient(60% 70% at 85% 30%, color-mix(in oklab, var(--berry) 45%, transparent), transparent 70%), radial-gradient(50% 60% at 10% 90%, color-mix(in oklab, var(--blush) 18%, transparent), transparent 70%), linear-gradient(160deg, var(--oxblood), var(--ink) 70%);
+  --gradient-dark: linear-gradient(180deg, var(--ink), var(--ink-soft));
+  --shadow-glow: 0 0 0 1px color-mix(in oklab, var(--blush) 35%, transparent), 0 20px 50px -20px color-mix(in oklab, var(--berry) 60%, transparent);
+}
+@theme inline {
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+}
+@utility bg-hero { background: var(--gradient-hero); }
+@utility bg-dark { background: var(--gradient-dark); }
+@utility shadow-glow { box-shadow: var(--shadow-glow); }
+@utility reveal {
+  @supports (animation-timeline: view()) {
+    animation: fade-up linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 40%;
+  }
+}

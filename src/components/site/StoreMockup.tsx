@@ -1,56 +1,56 @@
-/** Illustrative Shopify-style storefront mockup (concept artwork, not a client store). */
-function Product({ tone, name, price }: { tone: string; name: string; price: string }) {
+/** Original illustrative storefront concept drawn with shapes only (no real brand or product). */
+function Store({ compact }: { compact?: boolean }) {
+  const cards = compact ? ["bg-blush", "bg-berry/70"] : ["bg-blush", "bg-berry/70", "bg-secondary", "bg-oxblood/80"];
   return (
-    <div>
-      <div className={`aspect-[4/5] rounded-lg ${tone}`} />
-      <div className="mt-2 h-2 w-3/4 rounded bg-plum/70" aria-hidden />
-      <p className="sr-only">{name}</p>
-      <div className="mt-1.5 text-[0.6rem] font-bold text-berry">{price}</div>
+    <div className="h-full overflow-hidden bg-petal">
+      <div className="flex items-center justify-between border-b border-border px-3 py-2">
+        <span className="h-2 w-12 rounded bg-oxblood" />
+        <span className="flex gap-1.5">{[0, 1, 2].map((i) => <span key={i} className="h-1.5 w-5 rounded bg-plum/40" />)}</span>
+      </div>
+      <div className="relative flex flex-col justify-center gap-1.5 overflow-hidden bg-oxblood p-3" style={{ minHeight: compact ? "4.5rem" : "6rem" }}>
+        <span className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-berry/60 blur-xl" />
+        <span className="relative h-1.5 w-10 rounded bg-blush" />
+        <span className="relative h-3 w-3/5 rounded bg-petal" />
+        <span className="relative h-3 w-2/5 rounded bg-petal/80" />
+        <span className="relative mt-1 h-3 w-14 rounded-full bg-berry" />
+      </div>
+      <div className={`grid gap-2 p-3 ${compact ? "grid-cols-2" : "grid-cols-4"}`}>
+        {cards.map((t, i) => (
+          <div key={i}>
+            <div className={`aspect-[4/5] rounded-md ${t}`} />
+            <div className="mt-1.5 h-1.5 w-3/4 rounded bg-plum/60" />
+            <div className="mt-1 h-1.5 w-1/3 rounded bg-berry" />
+            <div className="mt-1.5 h-3 rounded-full bg-oxblood" aria-hidden />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
 export function StoreMockup() {
   return (
-    <div className="relative mx-auto w-full max-w-xl" aria-label="Illustration of a Shopify storefront on desktop and mobile" role="img">
-      <div className="rounded-2xl bg-card p-2 shadow-soft ring-1 ring-blush">
-        <div className="flex items-center gap-1.5 px-2 py-1.5">
-          <span className="h-2 w-2 rounded-full bg-blush" /><span className="h-2 w-2 rounded-full bg-blush" /><span className="h-2 w-2 rounded-full bg-blush" />
-          <span className="ml-3 h-4 flex-1 rounded-full bg-muted" />
-        </div>
-        <div className="overflow-hidden rounded-xl bg-petal">
-          <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
-            <span className="font-display text-sm text-oxblood">Maison Rosé</span>
-            <span className="flex gap-3 text-[0.55rem] font-semibold uppercase tracking-widest text-plum/70"><span>Shop</span><span>New</span><span>Cart (2)</span></span>
+    <figure className="relative mx-auto w-full max-w-2xl" role="img" aria-label="Illustrative storefront concept shown on a laptop and a phone">
+      <div className="pointer-events-none absolute inset-0 -z-0 m-auto h-3/4 w-3/4 rounded-full bg-berry/40 blur-3xl" />
+      <div className="relative flex flex-col items-center gap-6 sm:flex-row sm:items-end sm:gap-0">
+        {/* Laptop */}
+        <div className="w-full sm:w-[82%]">
+          <div className="rounded-t-2xl border border-petal/15 bg-ink p-2 shadow-glow">
+            <div className="aspect-[16/10] overflow-hidden rounded-lg"><Store /></div>
           </div>
-          <div className="grid grid-cols-5 gap-0">
-            <div className="col-span-3 flex flex-col justify-center gap-2 bg-oxblood p-5">
-              <span className="text-[0.55rem] font-bold uppercase tracking-[0.2em] text-blush">Autumn edit</span>
-              <span className="font-display text-xl leading-tight text-petal sm:text-2xl">Pieces made to be lived in.</span>
-              <span className="mt-1 w-fit rounded-full bg-berry px-3 py-1 text-[0.55rem] font-bold text-petal">Shop now</span>
+          <div className="mx-auto h-3 w-[108%] -translate-x-[3.7%] rounded-b-xl bg-gradient-to-b from-plum to-ink" />
+        </div>
+        {/* Phone */}
+        <div className="w-36 shrink-0 sm:-ml-10 sm:w-[26%]">
+          <div className="rounded-[1.4rem] border border-petal/20 bg-ink p-1.5 shadow-glow">
+            <div className="relative aspect-[9/18] overflow-hidden rounded-[1.1rem]">
+              <span className="absolute left-1/2 top-1 z-10 h-1.5 w-8 -translate-x-1/2 rounded-full bg-ink" />
+              <Store compact />
             </div>
-            <div className="col-span-2 bg-blush" />
-          </div>
-          <div className="grid grid-cols-4 gap-3 p-4">
-            <Product tone="bg-blush" name="Linen tote" price="$48" />
-            <Product tone="bg-secondary" name="Silk scarf" price="$62" />
-            <Product tone="bg-berry/70" name="Candle" price="$28" />
-            <Product tone="bg-muted" name="Ceramic cup" price="$34" />
           </div>
         </div>
       </div>
-      <div className="absolute -bottom-8 -right-2 w-[30%] min-w-24 rounded-[1.4rem] bg-plum p-1.5 shadow-soft sm:-right-6">
-        <div className="overflow-hidden rounded-[1.1rem] bg-petal">
-          <div className="mx-auto mt-1.5 h-1.5 w-8 rounded-full bg-plum/20" />
-          <div className="px-2.5 py-2 font-display text-[0.6rem] text-oxblood">Maison Rosé</div>
-          <div className="aspect-[4/5] bg-blush" />
-          <div className="space-y-1.5 p-2.5">
-            <div className="h-1.5 w-3/4 rounded bg-plum/70" />
-            <div className="text-[0.55rem] font-bold text-berry">$62</div>
-            <div className="rounded-full bg-oxblood py-1 text-center text-[0.5rem] font-bold text-petal">Add to cart</div>
-          </div>
-        </div>
-      </div>
-    </div>
+      <figcaption className="relative mt-5 text-center text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-blush/70">Illustrative storefront concept</figcaption>
+    </figure>
   );
 }
