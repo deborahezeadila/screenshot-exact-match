@@ -49,6 +49,40 @@ export function ServiceCard({ s, index }: { s: ServiceLite; index?: number }) {
   );
 }
 
+const ART = [
+  "radial-gradient(circle at 30% 40%, var(--blush), transparent 55%), linear-gradient(135deg, var(--oxblood), var(--ink))",
+  "conic-gradient(from 210deg at 70% 60%, var(--berry), var(--oxblood), var(--ink), var(--berry))",
+  "radial-gradient(circle at 75% 25%, var(--berry), transparent 50%), radial-gradient(circle at 20% 80%, var(--blush), transparent 45%), var(--ink)",
+  "repeating-linear-gradient(120deg, color-mix(in oklab, var(--blush) 25%, transparent) 0 2px, transparent 2px 18px), linear-gradient(160deg, var(--oxblood), var(--ink))",
+  "radial-gradient(ellipse at 50% 120%, var(--berry), transparent 60%), linear-gradient(180deg, var(--ink), var(--oxblood))",
+];
+
+/** Dark homepage service card with numbered indicator and original abstract artwork. */
+export function ShowcaseServiceCard({ s, index }: { s: ServiceLite; index: number }) {
+  const shape = index % 3;
+  return (
+    <Link to="/services/$slug" params={{ slug: s.slug }}
+      className="group flex h-full flex-col overflow-hidden rounded-3xl border border-petal/10 bg-ink-soft transition-all duration-300 hover:-translate-y-1.5 hover:shadow-glow motion-reduce:hover:translate-y-0">
+      <div className="relative h-32 overflow-hidden" style={{ background: ART[index % ART.length] }} aria-hidden>
+        <svg viewBox="0 0 100 60" className="absolute inset-0 h-full w-full opacity-70 transition-transform duration-500 group-hover:scale-110 motion-reduce:group-hover:scale-100" preserveAspectRatio="xMidYMid slice">
+          {shape === 0 && <circle cx="70" cy="30" r="16" fill="none" stroke="var(--blush)" strokeWidth="0.6" />}
+          {shape === 1 && <rect x="58" y="14" width="26" height="26" rx="6" transform="rotate(20 71 27)" fill="none" stroke="var(--blush)" strokeWidth="0.6" />}
+          {shape === 2 && <path d="M50 46 Q70 4 90 46" fill="none" stroke="var(--blush)" strokeWidth="0.6" />}
+        </svg>
+        <span className="absolute left-4 top-4 rounded-full border border-petal/25 bg-ink/50 px-2.5 py-1 font-display text-sm text-petal backdrop-blur">{String(index + 1).padStart(2, "0")}</span>
+      </div>
+      <div className="flex flex-1 flex-col p-6">
+        <h3 className="text-xl text-petal">{s.title}</h3>
+        <p className="mt-2 flex-1 text-sm leading-relaxed text-petal/65">{s.summary}</p>
+        <span className="mt-6 inline-flex w-fit items-center gap-2 rounded-full border border-petal/20 py-1 pl-4 pr-1 text-sm font-semibold text-petal transition-colors group-hover:border-blush/60">
+          More info
+          <span className="grid h-7 w-7 place-items-center rounded-full bg-blush text-oxblood transition-transform group-hover:rotate-45 motion-reduce:group-hover:rotate-0"><ArrowUpRight className="h-4 w-4" /></span>
+        </span>
+      </div>
+    </Link>
+  );
+}
+
 export function FaqList({ faqs }: { faqs: { id: string; question: string; answer: string }[] }) {
   if (!faqs.length) return null;
   return (
